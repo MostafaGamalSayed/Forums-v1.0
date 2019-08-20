@@ -36,7 +36,6 @@ class ParticipateInForumTest extends TestCase
         $this->assertDatabaseHas('replies', ['body' => $reply->body]);
     }
 
-
     /** @test */
     public function unauthenticated_user_can_not_participate_in_forum()
     {
@@ -55,8 +54,6 @@ class ParticipateInForumTest extends TestCase
 
         $this->post(route('reply.store',['channel' => $this->thread->channel->slug, 'thread' => $this->thread->id]), $reply->toArray())
             ->assertSessionHasErrors('body');
-
-
     }
 
 
@@ -213,4 +210,44 @@ class ParticipateInForumTest extends TestCase
         $this->post(route('reply.favorite', $this->reply->id), $this->reply->toArray());
         $this->post(route('reply.favorite', $this->reply->id), $this->reply->toArray());
     }*/
+
+
+    /** @test */
+    public function an_authenticated_user_can_not_create_reply_contains_a_spam()
+    {
+      // Given we hava an authenticated user
+      $this->signIn();
+
+      // If the user  tries to create a reply that contains a spam . Then, I expect an exception
+      $reply = make_factory('App\Reply', ['body' => 'aaaaaaa']);
+
+      $this->expectException('Exception');
+
+      $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
+    }
+
+
+    /** @test */
+    public function a_user_may_not_reply_more_than_once_per_minute()
+    {
+      // Given we have an authenticated user
+      $this->signIn();
+
+      // If the user create more than one reply per minute
+      $reply = make_factory('App\Reply');
+
+      $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
+
+
+      $this->assertDatabaseHas('replies', ['body' => $reply->body]);
+
+      $response = $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
+
+      // Then i expect 429 status
+      $response->assertStatus(429);
+
+    }
+
+
+
 }

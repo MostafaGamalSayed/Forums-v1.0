@@ -6,6 +6,9 @@ use App\Channel;
 use App\Reply;
 use App\Thread;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Inspections\Spam;
+use App\Rules\detectSpam;
 
 class RepliesController extends Controller
 {
@@ -22,34 +25,49 @@ class RepliesController extends Controller
 
 
 
-    public function store(Request $request,$channel,Thread $thread)
+    public function store(Channel $channel, Thread $thread)
     {
-        $this->validate($request, [
-            'body' => 'required'
-        ]);
-        $reply = $thread->addReply([
-            'body' => request('body'),
-            'user_id' => auth()->id()
+        request()->validate([
+          'body' => ['required', new detectSpam()]
         ]);
 
-        if(request()->expectsJson()){
-            return $reply->load('owner');
-        }
+          $reply = $thread->addReply([
+              'body' => request('body'),
+              'user_id' => auth()->id()
+          ]);
 
-        return redirect()
-            ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id])
-            ->with('flash', 'Reply has been created!');
+          // Update the updated_at field of the thread
+          $reply->thread->update([
+            'updated_at' => Carbon::now()
+          ]);
+
+          if(request()->expectsJson()){
+              return $reply->load('owner');
+          }
+
+
+          return redirect()
+              ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id])
+              ->with('flash', 'Reply has been created!');
     }
 
 
-    public function update(Thread $thread, Reply $reply)
+    public function update(Request $request,  Thread $thread, Reply $reply)
     {
-        $this->authorize('update', $reply);
-        $reply->update(request(['body']));
+          $this->authorize('update', $reply);
+
+          try{
+            $this->validateReply();
+
+            $reply->update(request(['body']));
+
+          }catch(\Exception $e){
+            return response('Your reply can\'t be updated at time', 422);
+          }
     }
 
 
-    public function destroy($thread, Reply $reply)
+    public function destroy(Thread $thread, Reply $reply)
     {
         $this->authorize('delete', $reply);
         if($reply->delete()){
@@ -58,5 +76,14 @@ class RepliesController extends Controller
             }
             return back();
         }
+    }
+
+
+    public function validateReply() {
+      request()->validate([
+        'body' => 'required'
+      ]);
+      // Detect any spam
+      app(Spam::class)->detect(request('body'));
     }
 }

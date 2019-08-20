@@ -104,4 +104,22 @@ class ReadThreadsTest extends TestCase
                 $threadWithZeroReplies->title
             ]);
     }
+
+    /** @test */
+    public function an_authenticated_user_has_an_indication_if_a_thread_updated()
+    {
+      // Given we have an authenticated users
+      $this->signIn();
+
+      // And a thread not read yet by the user
+      // Then i expect that the thread has update for the user
+      $this->assertTrue($this->thread->hasUpdateFor(auth()->user()));
+
+      // But if the user visit the thread and read it
+      auth()->user()->read($this->thread);
+
+      // Then i expect that the thread has NOT update for the user
+      $this->assertFalse($this->thread->hasUpdateFor(auth()->user()));
+    }
+
 }

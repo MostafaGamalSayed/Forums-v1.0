@@ -13,7 +13,6 @@ class Activity extends Model
      */
     protected $guarded = [];
 
-
     /**
      * Return the model of the activity feed
      *

@@ -23,12 +23,14 @@ class AppServiceProvider extends ServiceProvider
             $view->with('channels', Channel::all());
         });
 
+        \Validator::extend('detectSpam', 'App\Rules\detectSpam@passes');
+
 
     }
 
     /**
      * Register any application services.
-     *
+     *app.b
      * @return void
      */
     public function register()

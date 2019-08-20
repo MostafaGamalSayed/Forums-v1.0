@@ -1,4 +1,4 @@
-* text=auto
+lade.php* text=auto
 *.css linguist-vendored
 *.scss linguist-vendored
 *.js linguist-vendored

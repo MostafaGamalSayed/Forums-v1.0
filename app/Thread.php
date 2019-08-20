@@ -155,4 +155,19 @@ class Thread extends Model
         return $this->subscriptions()->where($attributes)->exists();
     }
 
+    /**
+    * Check if a thread has been updated since a given user last read it
+    *
+    * @param User $user
+    */
+    public function hasUpdateFor($user)
+    {
+      if(auth()->check()){
+        // Get the cache key for when a user read a thread
+        $key = $user->getCacheKeyForVisitedThread($this);
+
+        return $this->updated_at > cache($key);
+      }
+    }
+
 }

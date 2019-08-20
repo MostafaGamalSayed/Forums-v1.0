@@ -41707,7 +41707,9 @@ window.Echo = new __WEBPACK_IMPORTED_MODULE_0_laravel_echo__["a" /* default */](
 window.events = new Vue();
 
 window.flash = function (message) {
-    window.events.$emit('flash', message);
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
+
+    window.events.$emit('flash', { message: message, type: type });
 };
 
 /***/ }),
@@ -73892,7 +73894,7 @@ exports = module.exports = __webpack_require__(169)(false);
 
 
 // module
-exports.push([module.i, "\n.flash-message{\n    position: fixed;\n    right: 25px;\n    bottom: 40px;\n}\n", ""]);
+exports.push([module.i, "\n.flash-message {\n    position: fixed;\n    right: 25px;\n    bottom: 40px;\n}\n", ""]);
 
 // exports
 
@@ -74256,28 +74258,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['message'],
+    props: ['data'],
 
     data: function data() {
         return {
             body: '',
+            type: '',
             show: false
         };
     },
     created: function created() {
         var _this = this;
 
-        if (this.message) {
-            this.flash(this.message);
+        if (this.data) {
+            this.flash(data);
         }
-        window.events.$on('flash', function (message) {
-            return _this.flash(message);
+        window.events.$on('flash', function (data) {
+            return _this.flash(data);
         });
     },
 
     methods: {
-        flash: function flash(message) {
-            this.body = message;
+        flash: function flash(data) {
+            this.body = data.message;
+            this.type = data.type;
             this.show = true;
 
             this.hide();
@@ -74312,13 +74316,13 @@ var render = function() {
             expression: "show"
           }
         ],
-        staticClass: "alert alert-success flash-message",
+        staticClass: "alert flash-message",
+        class: "alert-" + _vm.type,
         attrs: { role: "alert" }
       },
       [
         _c("i", { staticClass: "fas fa-check-circle mr-1" }),
-        _c("strong", [_vm._v("Success! ")]),
-        _vm._v(_vm._s(_vm.body) + "\n    ")
+        _vm._v(" " + _vm._s(_vm.body) + "\n    ")
       ]
     )
   ])
@@ -74608,12 +74612,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-
 /* harmony default export */ __webpack_exports__["default"] = ({
 
     props: ['data', 'thread'],
 
-    components: { favorite: __WEBPACK_IMPORTED_MODULE_0__favorite_vue___default.a },
+    components: {
+        favorite: __WEBPACK_IMPORTED_MODULE_0__favorite_vue___default.a
+    },
     data: function data() {
         return {
             reply: this.data,
@@ -74646,13 +74651,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     methods: {
         update: function update() {
+            var _this3 = this;
+
             axios.patch('/threads/' + this.thread + '/replies/' + this.data.id, {
                 body: this.body
-            });
+            }).then(function () {
+                _this3.editing = false;
 
+                flash('The reply has been updated!');
+            }).catch(function (error) {
+                flash(error.response.data, 'danger');
+            });
+        },
+        cancelUpdate: function cancelUpdate() {
             this.editing = false;
 
-            flash('The reply has been updated!');
+            this.body = this.reply.body;
         },
         destroy: function destroy() {
             axios.delete('/threads/' + this.thread + '/replies/' + this.data.id);
@@ -75172,11 +75186,7 @@ var render = function() {
                     "button",
                     {
                       staticClass: "d-inline btn btn-link",
-                      on: {
-                        click: function($event) {
-                          _vm.editing = false
-                        }
-                      }
+                      on: { click: _vm.cancelUpdate }
                     },
                     [_vm._v("cancel")]
                   )
@@ -75273,12 +75283,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
             body: '',
-            endpoint: location.pathname + '/replies'
+            endpoint: location.pathname + '/replies',
+            errorMessages: []
         };
     },
 
@@ -75286,16 +75300,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         addReply: function addReply() {
             var _this = this;
 
-            axios.post(this.endpoint, { body: this.body }).then(function (_ref) {
+            axios.post(this.endpoint, {
+
+                body: this.body
+
+            }).then(function (_ref) {
                 var data = _ref.data;
 
                 // Clear the input
                 _this.body = '';
+
+                // Clear the error messages
+                _this.errorMessages = [];
+
                 // send a message to the user
                 flash('Your reply has been posted.');
+
                 // push the new reply to the replies list
                 _this.$emit('ReplyCreated', data);
+            }).catch(function (error) {
+                _this.errorMessages = [];
+                _this.errorMessages = error.response.data.errors;
             });
+        },
+        errorHas: function errorHas(key) {
+            // Return true if the error messages has the key parameter otherwise it will return false
+            return this.errorMessages.hasOwnProperty(key);
         }
     }
 });
@@ -75335,7 +75365,21 @@ var render = function() {
             _vm.body = $event.target.value
           }
         }
-      })
+      }),
+      _vm._v(" "),
+      _vm.errorHas("body")
+        ? _c(
+            "small",
+            { staticClass: "text-danger", attrs: { role: "alert" } },
+            [
+              _vm._v(
+                "\r\n            " +
+                  _vm._s(_vm.errorMessages["body"][0]) +
+                  "\r\n        "
+              )
+            ]
+          )
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c(

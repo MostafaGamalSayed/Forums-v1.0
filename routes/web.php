@@ -57,4 +57,3 @@ Route::delete('/threads/{channel}/{thread}/subscription', 'SubscriptionsControll
 
 Route::get('/{user}/notifications', 'NotificationsController@index')->name('notification.index');
 Route::delete('/{user}/notifications/{notification}', 'NotificationsController@destroy')->name('notification.destroy');
-

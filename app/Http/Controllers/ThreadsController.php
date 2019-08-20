@@ -8,6 +8,7 @@ use App\Thread;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Inspections\Spam;
 
 class ThreadsController extends Controller
 {
@@ -36,7 +37,7 @@ class ThreadsController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(Request $request, Spam $spam)
     {
         // Validate the requested data
         $this->validate($request, [
@@ -45,22 +46,33 @@ class ThreadsController extends Controller
             'channel' => ['required', Rule::exists('channels', 'id')]
         ]);
 
-        // Create the new thread
-        $thread = auth()->user()->addThread([
-            'title' => request('title'),
-            'body' => request('body'),
-            'channel_id' => request('channel')
-        ]);
+        try{
+          $spam->detect(request('body'));
 
-        // Redirect to show the new thread
-        return redirect()
-            ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id])
-            ->with('flash', 'Thread has been created!');
+          // Create the new thread
+          $thread = auth()->user()->addThread([
+              'title' => request('title'),
+              'body' => request('body'),
+              'channel_id' => request('channel')
+          ]);
+
+          // Redirect to show the new thread
+          return redirect()
+              ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id])
+              ->with('flash', 'Thread has been created!');
+        }catch(\Exception $e){
+
+          return back()
+              ->with('flash', 'Your Thread can\'t be published at time.');
+        }
     }
 
 
     public function show(Channel $channel, Thread $thread)
     {
+        if(auth()->check()){
+          auth()->user()->read($thread);
+        }
 
         return view('threads.show', compact('thread'));
     }
@@ -97,5 +109,3 @@ class ThreadsController extends Controller
     }
 
 }
-
-
