@@ -43,7 +43,12 @@ export default {
 
                 }).catch(error => {
                     this.errorMessages = [];
-                    this.errorMessages = error.response.data.errors;
+                    if (error.response.status == 422) {
+                        this.errorMessages = error.response.data.errors;
+                    } else {
+                        flash(error.response.data, 'danger')
+                    }
+
                 });
 
         },

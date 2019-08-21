@@ -10,11 +10,11 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Carbon\Carbon;
 
 class ReplyTest extends TestCase
 {
     use DatabaseMigrations;
-    use WithoutMiddleware;
 
     protected $reply;
 
@@ -51,5 +51,21 @@ class ReplyTest extends TestCase
         //$this->assertInstanceOf(Collection::class, $this->reply->favorites);
         $this->assertCount(1, $this->reply->favorites);
     }
+
+
+    /** @test  */
+    public function it_knows_if_it_was_just_published()
+    {
+      // Given we have a created reply
+      // I expect to return true if i check whether the reply was just published
+      $this->assertTrue($this->reply->wasJustPublished());
+
+      // If i update the created time of the reply to be a month ago
+      $this->reply->created_at = Carbon::now()->subMonth();
+
+      // Then i expect return true false i check whether the reply was just published
+      $this->assertFalse($this->reply->wasJustPublished());
+    }
+
 
 }

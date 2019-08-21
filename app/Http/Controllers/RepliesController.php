@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Inspections\Spam;
 use App\Rules\detectSpam;
+use Illuminate\Support\Facades\Gate;
+use App\User;
+use App\Notifications\YouWereMentioned;
+
 
 class RepliesController extends Controller
 {
@@ -27,28 +31,28 @@ class RepliesController extends Controller
 
     public function store(Channel $channel, Thread $thread)
     {
+        // Check if the user has the authorization to create reply
+        if(Gate::denies('create', new Reply)){
+            return response(
+              'You are posting too frequently.Please take a break.',
+              429
+            );
+        }
+
+        // validate the reply
         request()->validate([
           'body' => ['required', new detectSpam()]
         ]);
 
-          $reply = $thread->addReply([
-              'body' => request('body'),
-              'user_id' => auth()->id()
-          ]);
+        // Add new reply
+        $reply = $thread->addReply([
+            'body' => request('body'),
+            'user_id' => auth()->id()
+        ]);
 
-          // Update the updated_at field of the thread
-          $reply->thread->update([
-            'updated_at' => Carbon::now()
-          ]);
-
-          if(request()->expectsJson()){
-              return $reply->load('owner');
-          }
-
-
-          return redirect()
-              ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id])
-              ->with('flash', 'Reply has been created!');
+        if(request()->expectsJson()){
+            return $reply->load('owner');
+        }
     }
 
 
@@ -79,11 +83,4 @@ class RepliesController extends Controller
     }
 
 
-    public function validateReply() {
-      request()->validate([
-        'body' => 'required'
-      ]);
-      // Detect any spam
-      app(Spam::class)->detect(request('body'));
-    }
 }

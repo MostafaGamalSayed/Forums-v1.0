@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Mockery\CountValidator\Exception;
+use Carbon\Carbon;
 
 class Reply extends Model
 {
@@ -34,6 +35,15 @@ class Reply extends Model
      */
     public function owner(){
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+
+    /**
+    * Check if the reply was just published
+    */
+    public function wasJustPublished()
+    {
+      return $this->created_at->gt(Carbon::now()->subMinute());
     }
 
 }

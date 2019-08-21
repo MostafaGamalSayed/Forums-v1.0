@@ -117,4 +117,13 @@ class User extends Authenticatable
        $key = sprintf("users.%s.visits.%s", $this->id, $thread->id);
        return $key;
      }
+
+
+     /**
+     * Get the user last reply
+     */
+     public function lastReply()
+     {
+       return $this->hasOne('App\Reply')->latest();
+     }
 }

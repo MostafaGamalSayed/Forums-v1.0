@@ -6,6 +6,8 @@ use App\Filters\ThreadFilters;
 use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
+use App\Events\ReplyWasCreated;
 
 
 class Thread extends Model
@@ -74,13 +76,21 @@ class Thread extends Model
 
 
     /**
-     * Add a replay to a thread
+     * Add a reply to a thread
      *
      * @param Reply $reply
      */
     public function addReply($reply)
     {
         $reply =  $this->replies()->create($reply);
+
+        // Update the updated_at field of the thread
+        $reply->thread->update([
+          'updated_at' => Carbon::now()
+        ]);
+
+        // Prepare notifications for mentioned users
+        event(new ReplyWasCreated($reply));
 
         // Prepare notification for the subscribed users
         $this->subscriptions
@@ -90,6 +100,7 @@ class Thread extends Model
             ->each(function($sub) use($reply){
                 $sub->notify(new ThreadWasUpdated($this, $reply));
             });
+
         return $reply;
     }
 

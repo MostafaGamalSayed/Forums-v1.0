@@ -29,7 +29,7 @@ class ParticipateInForumTest extends TestCase
         $this->signIn($user = create_factory('App\User'));
 
 
-        $reply = make_factory('App\Reply');
+        $reply = make_factory('App\Reply', ['body' => '@mostafa Don\'t give up. Be like @mohammed']);
 
         $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
 
