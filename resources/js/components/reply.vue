@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div v-else>
-                <p class="card-text" v-text="body"></p>
+                <p class="card-text" v-html="body"></p>
                 <div v-if="signedIn">
                     <favorite :reply="reply"></favorite>
                 </div>
