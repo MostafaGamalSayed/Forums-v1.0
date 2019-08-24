@@ -47,7 +47,7 @@
                             </span>
                         </a>
 
-                        <a href="#" class="d-inline float-right">
+                        <a href="{{ route('channel.index', $thread->channel->slug) }}" class="d-inline float-right">
                             <span class="badge badge-primary p-1 text-monospace">
                                 {{ $thread->channel->name }}
                             </span>

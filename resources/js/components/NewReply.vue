@@ -11,6 +11,9 @@
 </template>
 
 <script>
+import 'jquery.caret';
+import 'at.js';
+
 export default {
     data() {
         return {
@@ -56,6 +59,21 @@ export default {
             // Return true if the error messages has the key parameter otherwise it will return false
             return this.errorMessages.hasOwnProperty(key);
         }
+    },
+    mounted() {
+        $('#thread-reply').atwho({
+            at: "@",
+            delay: 750,
+            callbacks: {
+                remoteFilter: function (query, callback) {
+                    $.getJSON("/api/users", {
+                        name: query
+                    }, function (usernames) {
+                        callback(usernames)
+                    });
+                }
+            }
+        });
     },
 }
 </script>

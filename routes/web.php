@@ -32,13 +32,13 @@ Route::resource('threads', 'ThreadsController', [
 ])->except(['edit', 'show']);
 
 // Temporary location(when i put this route with the replies routes it shows me `Page Not Found`---> TODO)
-Route::get('/threads/{channel}/{thread}/replies', 'RepliesController@index')->name('reply.index');
-Route::post('/threads/{channel}/{thread}/replies', 'RepliesController@store')->name('reply.store');
+Route::get('/{channel}/threads/{thread}/replies', 'RepliesController@index')->name('reply.index');
+Route::post('/{channel}/threads/{thread}/replies', 'RepliesController@store')->name('reply.store');
 
-Route::get('/threads/{channel}', 'ThreadsController@index')->name('channel.index');
-Route::get('/threads/{channel}/{thread}', 'ThreadsController@show')->name('thread.show');
-Route::get('/threads/{channel}/{thread}#replies', function(){return redirect('threads/{channel}/{thread}#replies');})->name('thread.showReplies');
-Route::get('/threads/{channel}/{thread}#reply-{reply}', function($channel, $thread, $reply){return redirect('threads/{channel}/{thread}#reply-' . $reply);})->name('thread.showReply');
+Route::get('{channel}/threads', 'ThreadsController@index')->name('channel.index');
+Route::get('{channel}/threads/{thread}', 'ThreadsController@show')->name('thread.show');
+Route::get('{channel}/threads/{thread}#replies', function(){return redirect('{channel}/threads/{thread}#replies');})->name('thread.showReplies');
+Route::get('{channel}/threads/{thread}#reply-{reply}', function($channel, $thread, $reply){return redirect('{channel}/threads/{thread}#reply-' . $reply);})->name('thread.showReply');
 
 Route::resource('threads.replies', 'RepliesController', [
     'names' => [
@@ -51,8 +51,8 @@ Route::resource('threads.replies', 'RepliesController', [
 Route::post('/replies/{reply}/favorite', 'FavoritesController@store')->name('reply.favorite');
 Route::delete('/replies/{reply}/favorite', 'FavoritesController@destroy')->name('reply.unFavorite');
 
-Route::post('/threads/{channel}/{thread}/subscription', 'SubscriptionsController@store')->name('thread.subscribe');
-Route::delete('/threads/{channel}/{thread}/subscription', 'SubscriptionsController@destroy')->name('thread.unSubscribe');
+Route::post('{channel}/threads/{thread}/subscription', 'SubscriptionsController@store')->name('thread.subscribe');
+Route::delete('{channel}/threads/{thread}/subscription', 'SubscriptionsController@destroy')->name('thread.unSubscribe');
 
 
 Route::get('/{user}/notifications', 'NotificationsController@index')->name('notification.index');

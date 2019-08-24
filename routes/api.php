@@ -14,3 +14,4 @@ use Illuminate\Http\Request;
 */
 
 //Route::middleware('auth:api')->get('/{user}/notifications', 'NotificationsController@index')->name('notification.index');
+Route::get('users', 'Api\UsersController@index');

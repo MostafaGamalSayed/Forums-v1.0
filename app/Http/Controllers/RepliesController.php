@@ -60,14 +60,12 @@ class RepliesController extends Controller
     {
           $this->authorize('update', $reply);
 
-          try{
-            $this->validateReply();
+          request()->validate([
+            'body' => ['required', new detectSpam()]
+          ]);
 
-            $reply->update(request(['body']));
+          $reply->update(request(['body']));
 
-          }catch(\Exception $e){
-            return response('Your reply can\'t be updated at time', 422);
-          }
     }
 
 
