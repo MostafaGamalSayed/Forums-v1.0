@@ -32,8 +32,8 @@ Route::resource('threads', 'ThreadsController', [
 ])->except(['edit', 'show']);
 
 // Temporary location(when i put this route with the replies routes it shows me `Page Not Found`---> TODO)
-Route::get('/{channel}/threads/{thread}/replies', 'RepliesController@index')->name('reply.index');
-Route::post('/{channel}/threads/{thread}/replies', 'RepliesController@store')->name('reply.store');
+Route::get('{channel}/threads/{thread}/replies', 'RepliesController@index')->name('reply.index');
+Route::post('{channel}/threads/{thread}/replies', 'RepliesController@store')->name('reply.store');
 
 Route::get('{channel}/threads', 'ThreadsController@index')->name('channel.index');
 Route::get('{channel}/threads/{thread}', 'ThreadsController@show')->name('thread.show');
@@ -57,3 +57,6 @@ Route::delete('{channel}/threads/{thread}/subscription', 'SubscriptionsControlle
 
 Route::get('/{user}/notifications', 'NotificationsController@index')->name('notification.index');
 Route::delete('/{user}/notifications/{notification}', 'NotificationsController@destroy')->name('notification.destroy');
+
+
+Route::post('users/{user}/avatar', 'Api\UsersAvatarController@store')->name('avatar.upload');
