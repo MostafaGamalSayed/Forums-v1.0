@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Carbon\Carbon;
 
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -100,6 +101,7 @@ class User extends Authenticatable
      */
      public function read($thread)
      {
+       // Cache that this user visit the given thread
        cache()->forever(
          $this->getCacheKeyForVisitedThread($thread),
          Carbon::now()

@@ -9,6 +9,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Inspections\Spam;
+use Illuminate\Support\Facades\Redis;
+
 
 class ThreadsController extends Controller
 {
@@ -27,7 +29,12 @@ class ThreadsController extends Controller
     {
         $threads = $this->getThreads($channel, $filters);
 
-        return view('threads.index', compact('threads', 'channel'));
+        $trendingThreads = collect(Redis::zrevrange('trending_threads', 0, 4))->map(function($trend){
+          return json_decode($trend);
+        });
+        //dd($trendingThreads);
+
+        return view('threads.index', compact('threads', 'channel', 'trendingThreads'));
     }
 
 
@@ -73,6 +80,15 @@ class ThreadsController extends Controller
         if(auth()->check()){
           auth()->user()->read($thread);
         }
+
+        // increment the given thread visiting scores by one
+        Redis::zincrby('trending_threads', 1, json_encode([
+          'thread_id' => $thread->id,
+          'channel_slug' => $thread->channel->slug,
+          'title' => $thread->title,
+          'body' => $thread->body,
+          'owner' => $thread->owner
+        ]));
 
         return view('threads.show', compact('thread'));
     }

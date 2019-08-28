@@ -3,22 +3,27 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+      <div class="col-md-12">
+        @guest
+        <p class="text-center text-muted font-weight-bold mt-2">
+            Please <a href="{{ route('login') }}">sign in</a> || <a href="{{ route('register') }}">sign up</a> to create threads and participate in the forum
+        </p>
+        @endguest
+      </div>
+    </div>
+    <div class="row justify-content-center">
         <div class="col-md-8">
-            @guest
-            <p class="text-center text-muted font-weight-bold mt-2">
-                Please <a href="{{ route('login') }}">sign in</a> || <a href="{{ route('register') }}">sign up</a> to create threads and participate in the forum
-            </p>
-            @endguest
-
-            <div class="card">
-                <div class="card-header font-weight-bold">
+            <div class="card card-default">
+                <div class="card-header">
+                  <h6 class="font-weight-bold">
                     {{ request()->route()->parameter('channel')? $channel->name . ' Channel threads' : 'All Threads' }}
+                  </h6>
                 </div>
 
                 <div class="card-body">
                     @forelse($threads as $thread)
                     <article>
-                        <h4 class="d-inline">
+                        <h5 class="d-inline">
                             <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}">
                               @if($thread->hasUpdateFor(auth()->user()))
                                 <strong>
@@ -28,7 +33,7 @@
                                 {{ $thread->title }}
                               @endif
                             </a>
-                        </h4>
+                        </h5>
                         @can('delete', $thread)
                         <form action="{{ route('thread.destroy', $thread->id) }}" method="post">
                             @csrf
@@ -64,6 +69,37 @@
             <div class="mt-3">
                 {{ $threads->links() }}
             </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-default">
+            <div class="card-header">
+              <h6 class="font-weight-bold">Trending Threads</h6>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled">
+                @forelse ($trendingThreads as  $key => $trend)
+                  <li class="media my-4">
+                      <img src="{{ $trend->owner->avatar_path ?  asset('storage/' . $trend->owner->avatar_path) : asset('storage/avatars/default.png') }}" style="height: 50px; width: 50px" class="mr-3" alt="...">
+                      <div class="media-body">
+                          <small class="mt-0 mb-1 font-weight-bold">
+                            <a href="{{ route('thread.show', ['channel' => $trend->channel_slug, 'thread' => $trend->thread_id]) }}">
+                              {{ $trend->title }}
+                            </a>
+                        </small>
+                          <small class="d-block text-muted">
+                            Posted by: <a href="{{ route('user.profile', $trend->owner->name) }}">{{ $trend->owner->name }}</a>
+                          </small>
+
+                      </div>
+                  </li>
+                @empty
+                  <p class="text-center text-muted">
+                    <small class="font-weight-bold">No trending threads yet !</small>
+                  </p>
+                @endforelse
+              </ul>
+            </div>
+          </div>
         </div>
     </div>
 </div>
