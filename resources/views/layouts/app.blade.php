@@ -21,7 +21,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed&display=swap" rel="stylesheet">
     <script>
         window.App = {!! json_encode([
             'signedIn'=> Auth::check(),
@@ -34,7 +34,7 @@
     </style>
     @yield('styles')
 </head>
-<body>
+<body style="font-family: 'Roboto', sans-serif;">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
             <div class="container">
