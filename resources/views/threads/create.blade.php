@@ -4,8 +4,8 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card mb-5">
-                <div class="card-header bg-primary text-white">
-                    <h3>Create Thread</h3>
+                <div class="card-header bg-primary">
+                    <h3 class="text-white">Create Thread</h3>
                 </div>
 
                 <div class="card-body">

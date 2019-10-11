@@ -45,7 +45,7 @@
 
             <div class="border-left border-info">
                 @foreach($dateActivities as $activity)
-                @include('activities.' . $activity->type)
+                  @include('activities.' . $activity->type)
                 @endforeach
             </div>
             @empty

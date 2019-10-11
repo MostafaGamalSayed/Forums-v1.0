@@ -21,6 +21,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('argon/assets/css/argon.css') }}" rel="stylesheet">
+
     <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed&display=swap" rel="stylesheet">
     <script>
         window.App = {!! json_encode([
@@ -140,6 +142,7 @@
         </main>
         <flash data="{{ session('flash') }}"></flash>
     </div>
+    <script src="{{ asset('argon/assets/js/argon.js') }}"></script>
     @yield('scripts')
 </body>
 </html>

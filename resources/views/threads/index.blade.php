@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <ul class="list-unstyled">
                         @forelse ($threads as $thread)
-                        <li class="media my-4 bg-light p-3">
+                        <li class="media my-4 p-3">
                             <img src="{{ asset('storage/' . $thread->owner->avatar()) }}" style="height: 60px; width: 60px" class="mr-3 rounded-circle" alt="...">
                             <div class="media-body">
                                 <span>
@@ -37,33 +37,44 @@
                                     </form>
                                     @endcan
                                 </span>
-                                <h6 class="mt-0 mb-0 font-weight-bold">
+                                <h6 class="mt-0 mb-0">
                                     <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}">
                                         @if($thread->hasUpdateFor(auth()->user()))
-                                            <strong>
-                                                {{ $thread->title }}
-                                            </strong>
+                                            <span class="font-weight-bold">{{ $thread->title }}</span>
                                             @else
                                             {{ $thread->title }}
                                             @endif
                                     </a>
                                 </h6>
                                 <small class="d-block text-muted">
-                                  Posted by:
-                                  <a href="{{ route('user.profile', $thread->owner->name) }}">
-                                    {{ $thread->owner->name }}
-                                  </a>
-                                  {{ $thread->created_at->diffForHumans() }}
+                                    Posted by:
+                                    <a href="{{ route('user.profile', $thread->owner->name) }}">
+                                        {{ $thread->owner->name }}
+                                    </a>
+                                    {{ $thread->created_at->diffForHumans() }}
                                 </small>
                                 <p class="mt-1">
                                     {{ $thread->body }}
                                 </p>
-                                <span class="d-block mt-1 mr-1">
-                                  <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="d-inline  text-muted">
-                                    <i class="fa fa-comment"></i>
-                                    {{ $thread->replies_count }} {{ str_plural('Reply', $thread->replies_count )}}
-                                  <a>
-                                </span>
+                                <div class="row">
+                                  <div class="col-xs-2">
+                                    <span class="mt-1 ml-3">
+                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="d-inline  text-muted">
+                                            <i class="fa fa-comment"></i>
+                                            {{ $thread->replies_count }} {{ str_plural('Reply', $thread->replies_count )}}
+                                        <a>
+                                    </span>
+                                  </div>
+                                  <div class="offset-8 col-xs-2">
+                                    <span class="mt-1">
+                                      <a href="{{ route('channel.index', $thread->channel->slug) }}" class="d-inline">
+                                          <span class="badge badge-primary p-1 text-monospace">
+                                              {{ $thread->channel->name }}
+                                          </span>
+                                      </a>
+                                    </span>
+                                  </div>
+                                </div>
                             </div>
                         </li>
                         @empty
