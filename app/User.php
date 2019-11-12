@@ -14,13 +14,17 @@ class User extends Authenticatable
 
 
     protected $fillable = [
-        'name', 'email', 'password', 'avatar_path'
+        'name', 'email', 'password', 'avatar_path', 'confirmation_token', 'confirmed'
     ];
 
 
     protected $hidden = [
         'password', 'remember_token', 'email'
     ];
+
+    protected $appends = ['avatarFullPath'];
+
+    protected $casts = ['confirmed' => 'boolean'];
 
 
     /**
@@ -138,5 +142,24 @@ class User extends Authenticatable
      public function avatar()
      {
         return $this->avatar_path ? : 'avatars/default.png';
+     }
+
+     /**
+     * Get a full path to the user avatar
+     *
+     * @return string
+     */
+     public function getAvatarFullPathAttribute()
+     {
+       return asset('storage/' . $this->avatar());
+     }
+
+     /** Activate user account */
+     public function activate()
+     {
+       $updated = $this->update([
+         'confirmed' => 1,
+         'confirmation_token' => null
+       ]);
      }
 }

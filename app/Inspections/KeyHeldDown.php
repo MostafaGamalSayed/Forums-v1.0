@@ -13,7 +13,7 @@ class KeyHeldDown
 
   public function detect($body)
   {
-    if (preg_match('/(.)\\1{4,}/', $body)) {
+    if (preg_match('/(.)\\1{7,}/', $body)) {
       throw new \Exception("Your Reply contains spam.");
 
     }

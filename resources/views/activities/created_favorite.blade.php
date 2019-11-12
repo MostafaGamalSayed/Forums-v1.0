@@ -12,6 +12,6 @@
     @endslot
 
     @slot('body')
-        <p class="lead">{{ $activity->subject->favoritable->body }}</p>
+        <p class="lead">{!! Markdown::convertToHtml($activity->subject->favoritable->body) !!}</p>
     @endslot
 @endcomponent

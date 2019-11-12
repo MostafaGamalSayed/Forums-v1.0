@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Events\ReplyWasCreated;
+use Illuminate\Support\Facades\Redis;
+use App\Visit;
 
 
 class Thread extends Model
 {
-    //
     use RecordActivity;
 
 
@@ -97,7 +98,7 @@ class Thread extends Model
             ->filter(function($sub) use ($reply){
                 return $sub->id != $reply->user_id;
             })
-            ->each(function($sub) use($reply){
+            ->each(function($sub) use ($reply){
                 $sub->notify(new ThreadWasUpdated($this, $reply));
             });
 
@@ -180,5 +181,11 @@ class Thread extends Model
         return $this->updated_at > cache($key);
       }
     }
+
+    public function visits()
+    {
+        return new Visit($this);
+    }
+
 
 }

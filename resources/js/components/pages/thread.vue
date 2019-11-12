@@ -1,10 +1,11 @@
-
-
 <script>
-    import replies from '../replies.vue';
-    import subscribe from '../subscription.vue';
+import replies from '../replies.vue';
+import subscribe from '../subscription.vue';
 
-    export default {
-        components:{replies, subscribe},
-    }
+export default {
+    components: {
+        replies,
+        subscribe
+    },
+}
 </script>

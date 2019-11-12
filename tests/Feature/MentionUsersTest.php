@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Carbon\Carbon;
 
 class MentionUsersTest extends TestCase
 {
@@ -22,7 +23,9 @@ class MentionUsersTest extends TestCase
 
       // If mostafa left a reply that mention mohammed
       $reply = make_factory('App\Reply', [
-        'body' => 'i will mention you @mohammed'
+        'body' => 'i will mention you @mohammed',
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now()
       ]);
 
       $this->post(route('reply.store',['channel' => $reply->thread->channel->slug, 'thread' => $reply->thread->id]), $reply->toArray());

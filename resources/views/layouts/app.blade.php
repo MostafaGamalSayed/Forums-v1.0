@@ -9,8 +9,6 @@
 
     <title>{{ config('app.name') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -21,8 +19,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('argon/assets/css/nucleo-svg.css') }}" rel="stylesheet">
     <link href="{{ asset('argon/assets/css/argon.css') }}" rel="stylesheet">
-
     <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed&display=swap" rel="stylesheet">
     <script>
         window.App = {!! json_encode([
@@ -35,13 +33,14 @@
         [v-cloak]{ display: none;}
     </style>
     @yield('styles')
+    <link href="{{ asset('css/atom-one-dark.css') }}" rel="stylesheet">
 </head>
 <body style="font-family: 'Roboto', sans-serif;">
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-expand-md navbar-light navbar-laravel bg-gradient-primary">
             <div class="container">
                 <nav class="navbar navbar-light">
-                    <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name') }}</a>
+                    <a class="navbar-brand text-white" href="{{ url('/') }}">{{ config('app.name') }}</a>
                 </nav>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -52,7 +51,7 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownBrowse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Browse
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownBrowse">
@@ -78,13 +77,13 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('thread.create') }}">
+                            <a class="nav-link text-white" href="{{ route('thread.create') }}">
                                 New Thread
                             </a>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Channels
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -100,17 +99,17 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link text-white" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             <li class="nav-item">
                                 @if (Route::has('register'))
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link text-white" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 @endif
                             </li>
                         @else
                             <user-notification></user-notification>
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-white font-weight-bold" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
@@ -137,12 +136,16 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main>
             @yield('content')
+            <flash></flash>
         </main>
-        <flash data="{{ session('flash') }}"></flash>
     </div>
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('argon/assets/js/argon.js') }}"></script>
     @yield('scripts')
+    <script src="{{ asset('js/highlight.pack.js') }}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

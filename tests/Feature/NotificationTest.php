@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
+use Carbon\Carbon;
 
 class NotificationTest extends TestCase
 {
@@ -23,13 +24,15 @@ class NotificationTest extends TestCase
         $thread = create_factory('App\Thread');
 
         // and the user subscribed to the thread
-        $thread->subscribe();
+        $thread->subscribe($user = auth()->user());
 
-        $this->assertEquals(1, auth()->user()->notifications->count());
-
+        $this->assertEquals(0 , auth()->user()->notifications->count());
 
         // then if any user left a reply to the subscribed thread
-        $reply = make_factory('App\Reply');
+        $reply = make_factory('App\Reply', [
+          'created_at' => Carbon::now()
+        ]);
+
         $this->json('POST',route('reply.store', ['channel' => $thread->channel->slug, 'thread' => $thread->id]), $reply->toArray());
 
         // Now i expect the user notifications will be 1

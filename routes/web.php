@@ -16,6 +16,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('/register/activate', 'Auth\ActivationController@index')->name('register.activate');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -28,8 +29,10 @@ Route::resource('threads', 'ThreadsController', [
         'store'   => 'thread.store',
         'update'  => 'thread.update',
         'destroy' => 'thread.destroy'
-    ]
+    ],
 ])->except(['edit', 'show']);
+
+Route::get('threads/trending', 'ThreadsController@trending')->name('thread.trending');
 
 // Temporary location(when i put this route with the replies routes it shows me `Page Not Found`---> TODO)
 Route::get('{channel}/threads/{thread}/replies', 'RepliesController@index')->name('reply.index');

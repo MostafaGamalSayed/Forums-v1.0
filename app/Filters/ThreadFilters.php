@@ -1,15 +1,15 @@
 <?php
 
 namespace App\Filters;
-
-
+use Illuminate\Support\Facades\Redis;
+use App\Channel;
 use App\User;
 
 class ThreadFilters extends Filters
 {
     protected $query, $request;
 
-    protected $filters = ['by', 'popular', 'unanswered', 'subscribed'];
+    protected $filters = ['by', 'popular', 'unanswered', 'subscribed', 'all', 'no_answers', 'query'];
 
     /**
      * Filter the threads by the user
@@ -39,4 +39,23 @@ class ThreadFilters extends Filters
             $query->where('user_id', auth()->id());
         })->get();
     }
+
+    protected function all()
+    {
+        return $this->query->latest();
+    }
+
+    protected function no_answers()
+    {
+      return $this->query->doesntHave('replies')->get();
+    }
+
+    protected function query()
+    {
+      return $this->query
+                ->where('title', 'like', '%' . request('query') . '%')
+                ->orWhere('body', 'like', '%' . request('query') . '%')
+                ->get();
+    }
+
 }

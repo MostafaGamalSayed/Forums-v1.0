@@ -13,6 +13,7 @@ class ThreadWasUpdated extends Notification
 
     protected $thread;
     protected $reply;
+    protected $username;
 
     /**
      * Create a new notification instance.
@@ -44,10 +45,10 @@ class ThreadWasUpdated extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+      return (new MailMessage)
+                  ->line('Hello,A thread you have been watching was updated by')
+                  ->action('Notification Action', url(route('thread.show', ['channel' => $this->thread->channel->slug, 'thread'=> $this->thread->id])))
+                  ->line('Thank you for using our application!');
     }
 
     /**

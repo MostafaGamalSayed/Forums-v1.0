@@ -9,6 +9,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Inspections\Spam;
+use App\Rules\detectSpam;
 use Illuminate\Support\Facades\Redis;
 
 
@@ -16,7 +17,8 @@ class ThreadsController extends Controller
 {
 
     public function __construct(){
-        $this->middleware('auth')->except(['index', 'show']);
+        $this->middleware('auth')->except(['index', 'show', 'trending']);
+        //$this->middleware('activated')->only(['create', 'store']);
     }
 
 
@@ -29,12 +31,9 @@ class ThreadsController extends Controller
     {
         $threads = $this->getThreads($channel, $filters);
 
-        $trendingThreads = collect(Redis::zrevrange('trending_threads', 0, 4))->map(function($trend){
-          return json_decode($trend);
-        });
-        //dd($trendingThreads);
+        $channels = Channel::all();
 
-        return view('threads.index', compact('threads', 'channel', 'trendingThreads'));
+        return view('threads.index', compact('threads', 'channel', 'channels','trendingThreads'));
     }
 
 
@@ -50,17 +49,15 @@ class ThreadsController extends Controller
         $this->validate($request, [
             'title' => 'required',
             'body' => 'required',
-            'channel' => ['required', Rule::exists('channels', 'id')]
+            'channel_id' => ['required', Rule::exists('channels', 'id')]
         ]);
 
         try{
-          $spam->detect(request('body'));
-
           // Create the new thread
           $thread = auth()->user()->addThread([
               'title' => request('title'),
               'body' => request('body'),
-              'channel_id' => request('channel')
+              'channel_id' => request('channel_id')
           ]);
 
           // Redirect to show the new thread
@@ -83,20 +80,18 @@ class ThreadsController extends Controller
 
         // increment the given thread visiting scores by one
         Redis::zincrby('trending_threads', 1, json_encode([
-          'thread_id' => $thread->id,
-          'channel_slug' => $thread->channel->slug,
+          'id' => $thread->id,
           'title' => $thread->title,
           'body' => $thread->body,
-          'owner' => $thread->owner
+          'owner' => $thread->owner,
+          'channel' => $thread->channel,
+          'avatar' => $thread->owner->avatar()
         ]));
 
+        // Update the thread visits counter
+        $thread->visits()->record();
+
         return view('threads.show', compact('thread'));
-    }
-
-
-    public function update(Request $request, Thread $thread)
-    {
-        //
     }
 
 
@@ -123,5 +118,18 @@ class ThreadsController extends Controller
 
         return $threads;
     }
+
+
+    public function trending()
+    {
+      //$trendingThreads = Redis::command('ZREVRANGE',['trending_threads', 0, 4, 'WITHSCORES']);
+      $threads = collect(Redis::zrevrange('trending_threads', 0, 4))->map(function($trend){
+        return json_decode($trend);
+      });
+      $channels = Channel::all();
+
+      return view('threads.trending', compact('threads', 'channels'));
+    }
+
 
 }

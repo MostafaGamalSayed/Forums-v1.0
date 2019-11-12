@@ -66,6 +66,8 @@ class RepliesController extends Controller
 
           $reply->update(request(['body']));
 
+          return $reply;
+
     }
 
 

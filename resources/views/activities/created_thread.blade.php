@@ -8,7 +8,6 @@
 
     @slot('body')
         <h5 class="card-title text-muted">{{ $activity->subject->title }}</h5>
-        <p class="card-text lead">{{ $activity->subject->body }}</p>
+        <p class="card-text lead">{!! Markdown::convertToHtml($activity->subject->body) !!}</p>
     @endslot
 @endcomponent
-

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Carbon\Carbon;
 
 class ParticipateInForumTest extends TestCase
 {
@@ -28,12 +29,17 @@ class ParticipateInForumTest extends TestCase
 
         $this->signIn($user = create_factory('App\User'));
 
+        $reply = [
+          'body' => 'test reply',
+          'user_id' => $user->id,
+          'thread_id' => $this->thread->id,
+          'created_at' => Carbon::now(),
+          'uodated_at' => Carbon::now()
+        ];
 
-        $reply = make_factory('App\Reply');
+        $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply);
 
-        $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
-
-        $this->assertDatabaseHas('replies', ['body' => $reply->body]);
+        $this->assertDatabaseHas('replies', ['body' => $reply['body']]);
     }
 
     /** @test */
@@ -219,7 +225,11 @@ class ParticipateInForumTest extends TestCase
       $this->signIn();
 
       // If the user  tries to create a reply that contains a spam . Then, I expect an exception
-      $reply = make_factory('App\Reply', ['body' => 'aaaaaaa']);
+      $reply = make_factory('App\Reply', [
+        'body' => 'aaaaaaa',
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now()
+      ]);
 
       $this->expectException('Exception');
 
@@ -234,14 +244,20 @@ class ParticipateInForumTest extends TestCase
       $this->signIn();
 
       // If the user create more than one reply per minute
-      $reply = make_factory('App\Reply');
+      $reply = [
+        'body' => 'test reply',
+        'user_id' => auth()->id(),
+        'thread_id' => $this->thread->id,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now()
+      ];
 
-      $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
+      $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply);
 
 
-      $this->assertDatabaseHas('replies', ['body' => $reply->body]);
+      $this->assertDatabaseHas('replies', ['body' => $reply['body']]);
 
-      $response = $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply->toArray());
+      $response = $this->post(route('reply.store', ['channel' => $this->thread->channel->slug,'thread_id' => $this->thread->id]), $reply);
 
       // Then i expect 429 status
       $response->assertStatus(429);

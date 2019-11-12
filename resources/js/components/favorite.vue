@@ -1,52 +1,59 @@
 <template>
-    <div>
-        <button type="submit"  class="bg-transparent border-0 text-red" style="cursor: pointer" @click="toggle" data-toggle="tooltip" :title= "title" data-placement="top">
+<div v-if="signedIn" class="d-inline">
+    <button type="submit" class="bg-transparent border-0 text-red" style="cursor: pointer" @click="toggle" data-toggle="tooltip" :title="title" data-placement="top">
+        <small>
             <i :class="classes"></i>
-        </button>
+        </small>
+    </button>
+    <small>
         <span v-text="favoritesCount"></span>
-    </div>
+    </small>
+</div>
 </template>
 
 <script>
-    export default {
-        props:[
+export default {
+    props: [
             'reply'
         ],
 
-        data(){
-            return{
-                favoritesCount: this.reply.favoritesCount,
-                isFavorited: this.reply.isFavorited
-            }
-        },
-        computed:{
-            classes(){
-                return [
-                    'fa fa-heart' ,
+    data() {
+        return {
+            favoritesCount: this.reply.favoritesCount,
+            isFavorited: this.reply.isFavorited
+        }
+    },
+    computed: {
+        classes() {
+            return [
+                    'fa fa-heart',
                     this.isFavorited ? 'text-danger' : 'text-muted'
                 ];
-            },
-            title(){
-                return this.isFavorited ? 'un-favorite' : 'favorite';
-            }
         },
-        methods:{
-            toggle(){
-                this.isFavorited ?  this.unFavorite() : this.favorite();
-            },
-            favorite(){
-                axios.post('/replies/' + this.reply.id + '/favorite');
-                this.favoritesCount ++;
-                this.isFavorited = true;
-                flash('The reply has been favorite');
+        title() {
+            return this.isFavorited ? 'un-favorite' : 'favorite';
+        },
+        signedIn() {
+            return window.App.signedIn;
+        },
+    },
+    methods: {
+        toggle() {
+            this.isFavorited ? this.unFavorite() : this.favorite();
+        },
+        favorite() {
+            axios.post('/replies/' + this.reply.id + '/favorite');
+            this.favoritesCount++;
+            this.isFavorited = true;
+            flash('The reply has been favorite');
 
-            },
-            unFavorite(){
-                axios.delete('/replies/' + this.reply.id + '/favorite');
-                this.favoritesCount --;
-                this.isFavorited = false;
-                flash('The reply has been un-favorite');
-            },
         },
-    }
+        unFavorite() {
+            axios.delete('/replies/' + this.reply.id + '/favorite');
+            this.favoritesCount--;
+            this.isFavorited = false;
+            flash('The reply has been un-favorite');
+        },
+    },
+}
 </script>

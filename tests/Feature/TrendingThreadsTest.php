@@ -32,6 +32,7 @@ class TrendingThreadsTest extends TestCase
 
         // If a user read this thread
         $this->get(route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id]));
+        //dd(Redis::zrevrange('trending_threads', 0, -1));
 
         // Then i expect the score of this thread will increment by one
         $this->assertCount(1, Redis::zrevrange('trending_threads', 0, -1));

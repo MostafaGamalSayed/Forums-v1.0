@@ -35,7 +35,7 @@ class UserTest extends TestCase
     $user = create_factory('App\User');
 
     // Then i expect the user avatar is a default one
-    $this->assertEquals('avatars/default.jpg', $user->avatar());
+    $this->assertEquals('avatars/default.png', $user->avatar());
 
     // if the user update his avatar
     $user->avatar_path = 'avatar/me.jpg';

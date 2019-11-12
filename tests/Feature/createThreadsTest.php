@@ -29,7 +29,7 @@ class createThreadsTest extends TestCase
         $thread = [
             'title' => 'Test title',
             'body' => 'Test body',
-            'channel' => create_factory('App\Channel')->id
+            'channel_id' => create_factory('App\Channel')->id
         ];
         $response = $this->post(route('thread.store'), $thread);
         $this->get($response->headers->get('Location'))
@@ -47,6 +47,20 @@ class createThreadsTest extends TestCase
     }
 
     /** @test */
+    public function un_activated_account_may_not_create_a_thread()
+    {
+        // Given that we have a user with un-activated account
+        $user = factory('App\User')->states('unActivated')->create();
+        $this->signIn($user);
+
+        // If the user try to create a new thread
+        $response = $this->post(route('thread.store'), $this->thread->toArray());
+
+        // Then i expect the user will be redirected to 'Account Activation page' with a flash message
+        $response->assertRedirect(route('thread.index'));
+    }
+
+    /** @test */
    /*public function an_authenticated_user_will_redirect_to_show_thread_page_after_create_a_thread()
     {
         // Given we have an authenticated user
@@ -60,7 +74,7 @@ class createThreadsTest extends TestCase
         ];
         $response = $this->post(route('thread.store'), $thread);
 
-        dd($response->headers->get('Location'));
+        $response->headers->get('Location'));
 
         //then the system should redirect to show thread page
         $response->assertRedirect($response->headers->get('Location'));
@@ -86,8 +100,8 @@ class createThreadsTest extends TestCase
     /** @test */
     public function a_thread_requires_a_channel()
     {
-        $this->publishThread(['channel' => ''])
-            ->assertSessionHasErrors('channel');
+        $this->publishThread(['channel_id' => ''])
+            ->assertSessionHasErrors('channel_id');
     }
 
 
@@ -96,8 +110,8 @@ class createThreadsTest extends TestCase
     {
         $channel = factory('App\Channel', 2)->create();
 
-        $this->publishThread(['channel' => '10000000'])
-            ->assertSessionHasErrors('channel');
+        $this->publishThread(['channel_id' => '10000000'])
+            ->assertSessionHasErrors('channel_id');
     }
 
 

@@ -50,8 +50,8 @@ class ReplyWasFavorite extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line('Hello' . $this->userName . ',the thread you were watching has been updated')
+                    ->action('Notification Action', url(route('thread.show', ['channel' => $this->reply->thread->channel->slug, 'thread'=> $this->reply->thread->id])))
                     ->line('Thank you for using our application!');
     }
 

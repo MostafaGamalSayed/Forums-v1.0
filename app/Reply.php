@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Mockery\CountValidator\Exception;
 use Carbon\Carbon;
+use GrahamCampbell\Markdown\Facades\Markdown;
 
 class Reply extends Model
 {
@@ -16,7 +17,7 @@ class Reply extends Model
 
     protected $with = ['owner'];
 
-    protected $appends = ['favoritesCount', 'isFavorited'];
+    protected $appends = ['favoritesCount', 'isFavorited', 'bodyMarkDown', 'ago'];
 
     /**
      * A reply belongs to one tread
@@ -73,6 +74,14 @@ class Reply extends Model
        );
    }
 
+   public function getBodyMarkDownAttribute()
+   {
+      return Markdown::convertToHtml($this->body);
+   }
 
+   public function getAgoAttribute()
+   {
+     return $this->created_at->diffForHumans();
+   }
 
 }

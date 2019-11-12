@@ -6,6 +6,7 @@ use App\Channel;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,7 +25,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \Validator::extend('detectSpam', 'App\Rules\detectSpam@passes');
-
+        Blade::component('components.SidebarLinks', 'SidebarLinks');
+        Blade::component('components.guestAlert', 'GuestAlert');
 
     }
 

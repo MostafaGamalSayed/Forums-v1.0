@@ -79,18 +79,4 @@ trait RecordActivity
         $className = class_basename($this);
         return strtolower("{$event}_{$className}");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

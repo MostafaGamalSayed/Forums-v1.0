@@ -1,12 +1,15 @@
 <template>
-<div>
-    <div class="form-group mt-5">
-        <textarea name="body" v-model="body" class="form-control" id="thread-reply" rows="4" placeholder="Can you help? leave your reply here."></textarea>
-        <small v-if="errorHas('body')" class="text-danger" role="alert">
-            {{ errorMessages['body'][0] }}
-        </small>
+<div v-if="signedIn">
+    <div class="media align-items-center mt-5">
+        <img alt="Image placeholder" class="avatar avatar-lg rounded-circle mb-4" :src="signedUserAvatar">
+        <div class="media-body">
+            <textarea class="form-control" id="thread-reply" placeholder="Can you help?" v-model="body" rows="3"></textarea>
+            <small v-if="errorHas('body')" class="text-danger" role="alert">
+                {{ errorMessages['body'][0] }}
+            </small>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary" @click="addReply">Reply</button>
+    <button type="submit" class="btn btn-primary float-right mr-2" @click="addReply">Reply</button>
 </div>
 </template>
 
@@ -19,7 +22,8 @@ export default {
         return {
             body: '',
             endpoint: location.pathname + '/replies',
-            errorMessages: []
+            errorMessages: [],
+            signedIn: window.App.signedIn
         }
     },
     methods: {
@@ -74,6 +78,11 @@ export default {
                 }
             }
         });
+    },
+    computed: {
+        signedUserAvatar() {
+            return window.App.user.avatarFullPath;
+        }
     },
 }
 </script>

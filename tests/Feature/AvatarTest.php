@@ -18,7 +18,7 @@ class AvatarTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $this->json('POST', '/api/users/1/avatar')
+        $this->json('POST', 'users/1/avatar')
           ->assertstatus(401);
     }
 
@@ -30,7 +30,7 @@ class AvatarTest extends TestCase
 
       $this->expectException('Illuminate\Validation\ValidationException');
 
-      $this->json('POST', 'api/users/' . auth()->id() . '/avatar', [
+      $this->json('POST', 'users/' . auth()->id() . '/avatar', [
           'avatar' =>  'not-valid-image'
       ]);
     }
@@ -41,7 +41,7 @@ class AvatarTest extends TestCase
     {
       $this->withExceptionHandling()->signIn();
 
-      $this->json('POST', 'api/users/' . auth()->id() . '/avatar', [
+      $this->json('POST', 'users/' . auth()->id() . '/avatar', [
           'avatar' =>  'not-valid-image'
       ])->assertstatus(422);  // 422 => un processable entity
     }
@@ -55,10 +55,10 @@ class AvatarTest extends TestCase
       // make a fake disk in [ storage > framework > testing > disks ]
       Storage::fake('public');
 
-      $this->json('POST', 'api/users/' . auth()->id() . '/avatar', [
+      $this->json('POST', 'users/' . auth()->id() . '/avatar', [
           'avatar' =>  $file = UploadedFile::fake()->image('avatar.jpg')
       ]);
-      
+
       Storage::disk('public')->assertExists('avatars/' . $file->hashName());
 
       $this->assertEquals(auth()->user()->avatar_path, 'avatars/' . $file->hashName());
