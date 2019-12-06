@@ -56,7 +56,7 @@ class ManageThreadsTest extends TestCase
         // a thread created by the authenticated user,
         $thread = create_factory('App\Thread', ['user_id' => auth()->id()]);
 
-        $reply = create_factory('App\Reply', ['thread_id' => $thread->id]);
+        $reply = create_factory('App\Reply', ['thread_id' => $thread->slug]);
 
         // If the auth user delete his own thread,
         $this->delete(route('thread.destroy', $thread->id));

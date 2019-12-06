@@ -39,7 +39,7 @@
     <div class="media media-comment" :id="'reply-' + reply.id">
         <img alt="Image placeholder" class="media-comment-avatar rounded-circle" :src="reply.owner.avatarFullPath">
         <div class="media-body">
-            <div class="media-comment-text">
+            <div class="media-comment-text" :class="bestReplySuccessBorder">
                 <h6 class="h5 mt-0 mb-0"><a :href="'/profiles/' + reply.owner.name" v-text="reply.owner.name"></a></h6>
                 <small v-if="!editing"><i class="fa fa-clock mr-1"></i>Replied {{ reply.ago }}</small>
                 <div v-if="editing">
@@ -52,10 +52,10 @@
                 <div v-else>
                     <p class="text-sm lh-160" v-html="markdown">
                     </p>
-                    <div class="icon-actions">
+                    <div class="media-footer">
                         <favorite :reply="reply"></favorite>
 
-                        <div v-if="signedUser && canUpdate" class="d-inline">
+                        <span v-if="signedUser && canUpdate">
                             |
                             <button type="submit" @click="editing = true" class="text-muted bg-transparent border-0" style="cursor: pointer">
                                 <small>
@@ -63,9 +63,9 @@
                                     Edit
                                 </small>
                             </button>
-                        </div>
+                        </span>
 
-                        <div v-if="signedUser && canDelete" class="d-inline">
+                        <span v-if="signedUser && canDelete">
                             |
                             <button type="submit" @click="destroy" class="text-muted bg-transparent border-0" style="cursor: pointer">
                                 <small>
@@ -73,7 +73,16 @@
                                     Delete
                                 </small>
                             </button>
-                        </div>
+                        </span>
+                        <span v-if="signedUser && canUpdateThread">
+                            <button v-show="!bestAnswer" type="submit" @click="markAsBestReply" class="btn btn-link btn-sm text-muted float-right" style="cursor: pointer">
+                                Best Answer ?
+                            </button>
+                        </span>
+                        <span v-show="bestAnswer" class="badge badge-success p-2 float-right">
+                            <i class="fa fa-check-circle mr-1"></i>
+                            The Best Answer
+                        </span>
                     </div>
                 </div>
             </div>
@@ -102,7 +111,8 @@ export default {
             editing: false,
             body: this.data.body,
             markdown: this.data.bodyMarkDown,
-            signedUser: window.App.signedIn
+            signedUser: window.App.signedIn,
+            bestAnswer: this.data.isBestReply
         }
     },
     computed: {
@@ -118,6 +128,12 @@ export default {
         canDelete() {
             return this.authorize(user => this.data.user_id == user.id);
         },
+        canUpdateThread() {
+            return this.authorize(user => this.data.thread.user_id == user.id);
+        },
+        bestReplySuccessBorder() {
+            return this.bestAnswer ? 'border border-success' : 'border-0';
+        }
     },
     methods: {
         update() {
@@ -144,8 +160,24 @@ export default {
             axios.delete('/threads/' + this.thread + '/replies/' + this.data.id);
             this.$emit('deleted', this.data.id);
             flash('The reply has been deleted');
+        },
+        markAsBestReply() {
+            axios.post('/replies/' + this.reply.id + '/best').then((response) => {
+                this.bestAnswer = true;
 
+                window.events.$emit('best-reply-selected', this.data.id);
+
+                flash('You marked this reply as the best answer.');
+            });
         }
     },
+    created() {
+        $('table').addClass('table table-bordered');
+        $('thead').addClass('bg-default text-white');
+        window.events.$on('best-reply-selected', id => {
+            console.log(this.data.id == id);
+            this.bestAnswer = (this.data.id == id);
+        });
+    }
 }
 </script>

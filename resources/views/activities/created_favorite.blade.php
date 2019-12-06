@@ -3,7 +3,7 @@
         {{ $user->name }} favorited a
         <a href="{{ route('thread.showReply',
          ['channel' => $activity->subject->favoritable->thread->channel->slug,
-          'thread'  => $activity->subject->favoritable->thread->id,
+          'thread'  => $activity->subject->favoritable->thread->slug,
           'reply'   => $activity->subject->favoritable->id
           ]
          ) }}">

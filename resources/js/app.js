@@ -1,11 +1,11 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
+ import InstantSearch from 'vue-instantsearch';
 window.Vue = require('vue');
+Vue.use(InstantSearch);
 
 Vue.prototype.authorize = function(handler){
     return handler(window.App.user);
@@ -23,6 +23,8 @@ Vue.component('flash', require('./components/flash.vue'));
 Vue.component('thread-view', require('./components/pages/thread.vue'));
 Vue.component('paginator', require('./components/paginator.vue'));
 Vue.component('user-notification', require('./components/UserNotification.vue'));
+Vue.component('thread-search', require('./components/search.vue'));
+
 
 
 const app = new Vue({

@@ -33,7 +33,7 @@ class NotificationTest extends TestCase
           'created_at' => Carbon::now()
         ]);
 
-        $this->json('POST',route('reply.store', ['channel' => $thread->channel->slug, 'thread' => $thread->id]), $reply->toArray());
+        $this->json('POST',route('reply.store', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]), $reply->toArray());
 
         // Now i expect the user notifications will be 1
         $this->assertEquals(1, auth()->user()->fresh()->notifications->count()); //Don't forget to use fresh()
@@ -117,7 +117,7 @@ class NotificationTest extends TestCase
 
         // then if any user left a reply to the subscribed thread
         $reply = create_factory('App\Reply');
-        $this->post(route('reply.store', ['channel' => $thread->channel->slug,'thread_id' => $thread->id]), $reply->toArray());
+        $this->post(route('reply.store', ['channel' => $thread->channel->slug,'thread_id' => $thread->slug]), $reply->toArray());
 
         Notification::assertSentTo(auth()->user() ,ThreadWasUpdated::class);
     }

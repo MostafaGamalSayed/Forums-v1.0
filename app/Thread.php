@@ -10,11 +10,12 @@ use Carbon\Carbon;
 use App\Events\ReplyWasCreated;
 use Illuminate\Support\Facades\Redis;
 use App\Visit;
+use Laravel\Scout\Searchable;
 
 
 class Thread extends Model
 {
-    use RecordActivity;
+    use RecordActivity, Searchable;
 
 
     protected $guarded = [];
@@ -22,6 +23,15 @@ class Thread extends Model
     protected $with = ['channel', 'owner'];
 
     protected $appends = ['isSubscribed'];
+
+    /*
+     * Customizing the route key for the model
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 
     /**
      * The "booting" method of the model.
@@ -40,7 +50,45 @@ class Thread extends Model
         static::deleting(function($thread){
             return $thread->replies->each->delete();
         });
+
+        static::created(function ($thread) {
+        $thread->update(['slug' => $thread->title]);
+    });
     }
+
+    /**
+     * Set the thread's slug.
+     *
+     * @param  string  $value
+     * @return void
+     */
+     public function setSlugAttribute($value)
+     {
+       if (static::whereSlug($slug = str_slug($value))->exists()) {
+           $slug = "{$slug}-{$this->id}";
+       }
+        $this->attributes['slug'] = $slug;
+     }
+
+
+     /**
+      * Increment a slug's suffix.
+      *
+      * @param  string $slug
+      * @return string
+      */
+     public function incrementSlug($slug)
+     {
+        $max = static::whereTitle($this->title)->latest('id')->value('slug');
+
+        if (is_numeric($max[-1])) {
+            $match = preg_replace_callback('/(\d+)$/', function ($matches) {
+                return $matches[1] + 1;
+            }, $max);
+            return $match;
+        }
+        return "{$slug}-2";
+     }
 
 
     /**

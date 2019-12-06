@@ -66,13 +66,12 @@
                 </form>
             </div>
             <div class="col d-none d-lg-block d-xl-block">
-                <form id="searchForm">
-                    @csrf
+                <form action="{{ route('thread.search') }}" method="get">                
                     <div class="input-group input-group-alternative mb-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-search"></i></span>
                         </div>
-                        <input class="form-control" id="searchInput" value="{{ request('query') ? request('query') : '' }}" placeholder="Search" type="text">
+                        <input name="query" class="form-control" id="searchInput"  placeholder="Search" type="text">
                     </div>
                 </form>
             </div>
@@ -91,7 +90,7 @@
                             <div class="row ">
                                 <div class="col-7">
                                     <h6 class="mt-0 mb-0">
-                                        <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="thread-title text-dark font-weight-bolder">
+                                        <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}" class="thread-title text-dark font-weight-bolder">
                                             @if($thread->hasUpdateFor(auth()->user()))
                                                 <span class="font-weight-bold">{{ $thread->title }}</span>
                                                 @else
@@ -115,7 +114,7 @@
                                         {{ $thread->visits()->count() }}
                                     </span>
                                     <span class="mr-2">
-                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="d-inline  text-muted">
+                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}" class="d-inline  text-muted">
                                             <i class="fa fa-comment"></i>
                                             {{ $thread->replies_count }}
                                         </a>
@@ -130,7 +129,7 @@
                             {{-- <div class="row">
                                 <div class="col-12">
                                     <span>
-                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="d-inline text-muted">
+                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}" class="d-inline text-muted">
                             <small>
                                 <i class="fa fa-comment"></i>
                                 {{ $thread->replies_count }} {{ str_plural('Reply', $thread->replies_count )}}
@@ -171,7 +170,7 @@
         @endforelse
         </ul>
         <ul class="pagination pagination-primary text-center">
-            {{ $threads->links() }}
+            {{ $threads->appends(request()->input())->links() }}
         </ul>
     </div>
     </div>
@@ -198,7 +197,7 @@
             <img src="{{ asset('storage/' . $thread->owner->avatar()) }}" style="height: 60px; width: 60px" class="mr-3 rounded-circle" alt="...">
             <div class="media-body">
                 <h6 class="mt-0 mb-0">
-                    <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}">
+                    <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}">
                         @if($thread->hasUpdateFor(auth()->user()))
                             <span class="font-weight-bold">{{ $thread->title }}</span>
                             @else
@@ -217,7 +216,7 @@
                 <div class="row">
                     <div class="col-12">
                         <span>
-                            <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="d-inline  text-muted">
+                            <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}" class="d-inline  text-muted">
                                 <small>
                                     <i class="fa fa-comment"></i>
                                     {{ $thread->replies_count }} {{ str_plural('Reply', $thread->replies_count )}}
@@ -303,11 +302,6 @@
         window.location.href = '/' + slug + '/threads';
     });
 
-    $('#searchForm').submit(function(event) {
-        event.preventDefault();
-        var q = $('#searchInput').val();
-        window.location.href = '/threads?query=' + q;
-    });
 
     $('#channelFilter').on('change', function () {
       $('#channelFilterButton').prop('disabled', !$(this).val());

@@ -45,14 +45,14 @@
   </li>
 
   <li class="nav-item sidebarLink p-2 pl-2">
-    <a class="nav-link d-inline"  href="#">
+    <a class="nav-link d-inline {{ request('solved') ? 'active font-weight-bold' : '' }}"  href="{{ route('thread.index', ['solved' => 1]) }}">
       <i class="fa fa-check-circle mr-3"></i>
       Solved
     </a>
   </li>
 
   <li class="nav-item sidebarLink p-2 pl-2">
-    <a class="nav-link d-inline"  href="#">
+    <a class="nav-link d-inline {{ request('unSolved') ? 'active font-weight-bold' : '' }}"  href="{{ route('thread.index', ['unSolved' => 1]) }}">
       <i class="fa fa-times mr-3"></i>
       UnSolved
     </a>

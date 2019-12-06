@@ -1,5 +1,5 @@
 <template>
-<div v-if="signedIn" class="d-inline">
+<span v-if="signedIn">
     <button type="submit" class="bg-transparent border-0 text-red" style="cursor: pointer" @click="toggle" data-toggle="tooltip" :title="title" data-placement="top">
         <small>
             <i :class="classes"></i>
@@ -8,7 +8,7 @@
     <small>
         <span v-text="favoritesCount"></span>
     </small>
-</div>
+</span>
 </template>
 
 <script>

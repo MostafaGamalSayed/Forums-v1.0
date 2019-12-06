@@ -42,7 +42,7 @@ return [
     */
 
     'extensions' => [
-      Webuni\CommonMark\TableExtension\TableExtension::class,
+      Webuni\CommonMark\TableExtension\TableExtension::class,      
     ],
 
     /*

@@ -2,7 +2,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="/css/vendor/jquery.atwho.css">
-<style>
+{{-- <style>
     ul .sidebarLink:hover {
         background-color: #f6f6f6;
     }
@@ -10,7 +10,7 @@
     .card:hover {
         background-color: #f4f5f7;
     }
-</style>
+</style> --}}
 @endsection
 
 @section('content')
@@ -147,6 +147,8 @@
         $('#focusReply').click(function() {
             $('#thread-reply').focus();
         });
+        $('table').addClass('table table-bordered');
+        $('thead').addClass('bg-default text-white');
     });
 </script>
 @endsection

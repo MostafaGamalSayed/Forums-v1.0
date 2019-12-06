@@ -33,6 +33,7 @@ Route::resource('threads', 'ThreadsController', [
 ])->except(['edit', 'show']);
 
 Route::get('threads/trending', 'ThreadsController@trending')->name('thread.trending');
+Route::get('threads/search', 'SearchController@show')->name('thread.search');
 
 // Temporary location(when i put this route with the replies routes it shows me `Page Not Found`---> TODO)
 Route::get('{channel}/threads/{thread}/replies', 'RepliesController@index')->name('reply.index');
@@ -49,10 +50,9 @@ Route::resource('threads.replies', 'RepliesController', [
         'destroy' => 'reply.destroy'
     ]
 ])->only([ 'destroy','update']);
-
-
 Route::post('/replies/{reply}/favorite', 'FavoritesController@store')->name('reply.favorite');
 Route::delete('/replies/{reply}/favorite', 'FavoritesController@destroy')->name('reply.unFavorite');
+Route::post('/replies/{reply}/best', 'BestReplyController@store')->name('reply.best');
 
 Route::post('{channel}/threads/{thread}/subscription', 'SubscriptionsController@store')->name('thread.subscribe');
 Route::delete('{channel}/threads/{thread}/subscription', 'SubscriptionsController@destroy')->name('thread.unSubscribe');
@@ -63,3 +63,6 @@ Route::delete('/{user}/notifications/{notification}', 'NotificationsController@d
 
 
 Route::post('users/{user}/avatar', 'Api\UsersAvatarController@store')->name('avatar.upload');
+
+
+Route::get('/search', function(){return view('search');});

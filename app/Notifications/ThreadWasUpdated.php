@@ -47,7 +47,7 @@ class ThreadWasUpdated extends Notification
     {
       return (new MailMessage)
                   ->line('Hello,A thread you have been watching was updated by')
-                  ->action('Notification Action', url(route('thread.show', ['channel' => $this->thread->channel->slug, 'thread'=> $this->thread->id])))
+                  ->action('Notification Action', url(route('thread.show', ['channel' => $this->thread->channel->slug, 'thread'=> $this->thread->slug])))
                   ->line('Thank you for using our application!');
     }
 

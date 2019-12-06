@@ -9,7 +9,7 @@ class ThreadFilters extends Filters
 {
     protected $query, $request;
 
-    protected $filters = ['by', 'popular', 'unanswered', 'subscribed', 'all', 'no_answers', 'query'];
+    protected $filters = ['by', 'popular', 'unanswered', 'subscribed', 'all', 'no_answers', 'query', 'solved', 'unSolved'];
 
     /**
      * Filter the threads by the user
@@ -56,6 +56,16 @@ class ThreadFilters extends Filters
                 ->where('title', 'like', '%' . request('query') . '%')
                 ->orWhere('body', 'like', '%' . request('query') . '%')
                 ->get();
+    }
+
+    protected function solved()
+    {
+      return $this->query->whereNotNull('best_reply_id')->get();
+    }
+
+    protected function unSolved()
+    {
+      return $this->query->whereNull('best_reply_id')->get();
     }
 
 }

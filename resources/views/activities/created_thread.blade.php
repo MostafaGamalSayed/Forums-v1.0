@@ -1,7 +1,7 @@
 @component('activities.partials.activity')
     @slot('heading')
         {{ $activity->subject->owner->name }} posted
-        <a href="{{ route('thread.show', ['channel' => $activity->subject->channel->slug, 'thread' => $activity->subject->id]) }}">
+        <a href="{{ route('thread.show', ['channel' => $activity->subject->channel->slug, 'thread' => $activity->subject->slug]) }}">
             '{{ $activity->subject->title }}'
         </a>
     @endslot

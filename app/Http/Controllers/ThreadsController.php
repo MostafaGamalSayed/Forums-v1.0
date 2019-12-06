@@ -52,23 +52,17 @@ class ThreadsController extends Controller
             'channel_id' => ['required', Rule::exists('channels', 'id')]
         ]);
 
-        try{
-          // Create the new thread
-          $thread = auth()->user()->addThread([
-              'title' => request('title'),
-              'body' => request('body'),
-              'channel_id' => request('channel_id')
-          ]);
+        // Create the new thread
+        $thread = auth()->user()->addThread([
+            'title' => request('title'),
+            'body' => request('body'),
+            'channel_id' => request('channel_id'),            
+        ]);
 
-          // Redirect to show the new thread
-          return redirect()
-              ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id])
-              ->with('flash', 'Thread has been created!');
-        }catch(\Exception $e){
-
-          return back()
-              ->with('flash', 'Your Thread can\'t be published at time.');
-        }
+        // Redirect to show the new thread
+        return redirect()
+            ->route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->slug])
+            ->with('flash', 'Thread has been created!');
     }
 
 

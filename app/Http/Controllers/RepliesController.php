@@ -41,7 +41,7 @@ class RepliesController extends Controller
 
         // validate the reply
         request()->validate([
-          'body' => ['required', new detectSpam()]
+          'body' => ['required']
         ]);
 
         // Add new reply

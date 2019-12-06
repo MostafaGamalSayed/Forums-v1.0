@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddSlugColumnToThreadsTable extends Migration
+class AddBestReplyIdColumnToThreadsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class AddSlugColumnToThreadsTable extends Migration
     public function up()
     {
         Schema::table('threads', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique();
+            $table->unsignedInteger('best_reply_id')->nullable();
+            $table->foreign('best_reply_id')->references('id')->on('replies')->onDelete('set null');
         });
     }
 
@@ -26,7 +27,7 @@ class AddSlugColumnToThreadsTable extends Migration
     public function down()
     {
         Schema::table('threads', function (Blueprint $table) {
-            $table->dropColumn('slug');
+            $table->dropColumn('best_reply_id');
         });
     }
 }

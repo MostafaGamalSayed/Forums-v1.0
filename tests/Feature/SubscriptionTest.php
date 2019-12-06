@@ -20,7 +20,7 @@ class SubscriptionTest extends TestCase
         $thread = create_factory('App\Thread');
 
         // If the authenticated user subscribe to this thread
-        $this->postJson(route('thread.subscribe', ['channel' => $thread->channel->slug, 'thread' => $thread->id]));
+        $this->postJson(route('thread.subscribe', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]));
 
         // Then i expect the subscription list of the user will be [1]
         $this->assertEquals(1, $thread->subscriptions()->where('user_id', auth()->id())->count());

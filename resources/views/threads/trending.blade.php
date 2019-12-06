@@ -89,14 +89,14 @@
                             <div class="row ">
                                 <div class="col-7">
                                     <h6 class="mt-0 mb-0">
-                                        <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="thread-title text-dark font-weight-bolder">
+                                        <a href="{{ route('thread.show', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}" class="thread-title text-dark font-weight-bolder">
                                             {{ $thread->title }}
                                         </a>
                                     </h6>
                                     <small class="d-block text-muted">
                                         <a href="{{ route('user.profile', $thread->owner->name) }}" class="text-uppercase font-weight-bold">
                                             {{ $thread->owner->name }}
-                                        </a>                                    
+                                        </a>
                                     </small>
                                 </div>
                                 <div class="col-5 text-right">
@@ -105,7 +105,7 @@
                                         {{ \App\Thread::find($thread->id)->visits()->count() }}
                                     </span>
                                     <span class="mr-2">
-                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->id]) }}" class="d-inline  text-muted">
+                                        <a href="{{ route('thread.showReplies', ['channel' => $thread->channel->slug, 'thread' => $thread->slug]) }}" class="d-inline  text-muted">
                                             <i class="fa fa-comment"></i>
                                             {{ $thread->replies_count }}
                                         </a>

@@ -51,7 +51,7 @@ class ReplyWasFavorite extends Notification
     {
         return (new MailMessage)
                     ->line('Hello' . $this->userName . ',the thread you were watching has been updated')
-                    ->action('Notification Action', url(route('thread.show', ['channel' => $this->reply->thread->channel->slug, 'thread'=> $this->reply->thread->id])))
+                    ->action('Notification Action', url(route('thread.show', ['channel' => $this->reply->thread->channel->slug, 'thread'=> $this->reply->thread->slug])))
                     ->line('Thank you for using our application!');
     }
 

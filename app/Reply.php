@@ -17,7 +17,7 @@ class Reply extends Model
 
     protected $with = ['owner'];
 
-    protected $appends = ['favoritesCount', 'isFavorited', 'bodyMarkDown', 'ago'];
+    protected $appends = ['favoritesCount', 'isFavorited', 'bodyMarkDown', 'ago', 'threadSlug', 'isBestReply'];
 
     /**
      * A reply belongs to one tread
@@ -67,9 +67,10 @@ class Reply extends Model
     */
    public function setBodyAttribute($body)
    {
+      //This is an [example link](http:///example.com/)
        $this->attributes['body'] = preg_replace(
            '/@([\w\-]+)/',
-           '<a href="/profiles/$1">$0</a>',
+           '[$0](/profiles/$1)',
            $body
        );
    }
@@ -82,6 +83,26 @@ class Reply extends Model
    public function getAgoAttribute()
    {
      return $this->created_at->diffForHumans();
+   }
+
+   public function getThreadSlugAttribute()
+   {
+     return $this->thread->slug;
+   }
+
+   public function markAsBestReply()
+   {
+     return $this->thread->update(['best_reply_id' => $this->id]);
+   }
+
+   public function isBestReply()
+   {
+     return $this->thread->best_reply_id == $this->id;
+   }
+
+   public function getIsBestReplyAttribute()
+   {
+     return $this->isBestReply();
    }
 
 }
