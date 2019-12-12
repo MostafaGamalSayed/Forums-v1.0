@@ -70,26 +70,21 @@ class Thread extends Model
         $this->attributes['slug'] = $slug;
      }
 
-
-     /**
-      * Increment a slug's suffix.
-      *
-      * @param  string $slug
-      * @return string
-      */
-     public function incrementSlug($slug)
+     /* Get the full path of a thread */
+     public function path()
      {
-        $max = static::whereTitle($this->title)->latest('id')->value('slug');
-
-        if (is_numeric($max[-1])) {
-            $match = preg_replace_callback('/(\d+)$/', function ($matches) {
-                return $matches[1] + 1;
-            }, $max);
-            return $match;
-        }
-        return "{$slug}-2";
+        return "{$this->channel->slug}/threads/{$this->slug}";
      }
 
+     /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        return $this->toArray() + ['path' => $this->path(), 'isSolved' => $this->isSolved(), 'owner' => $this->owner];
+    }
 
     /**
      * A thread belongs to one user
@@ -233,6 +228,14 @@ class Thread extends Model
     public function visits()
     {
         return new Visit($this);
+    }
+
+    public function isSolved()
+    {
+      if($this->best_reply_id != null){
+        return true;
+      }
+      return false;
     }
 
 

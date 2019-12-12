@@ -66,7 +66,7 @@
                 </form>
             </div>
             <div class="col d-none d-lg-block d-xl-block">
-                <form action="{{ route('thread.search') }}" method="get">                
+                <form action="{{ route('thread.search') }}" method="get">
                     <div class="input-group input-group-alternative mb-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-search"></i></span>

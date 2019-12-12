@@ -22,7 +22,8 @@
 
                           <div class="form-group {{ $errors->has('body') ? 'has-error' : '' }}">
                               <label for="inputBody">Body</label>
-                              <textarea name="body" class="form-control form-control-alternative" id="inputBody" rows="3" placeholder="Enter the body..." >{{ old('body') }}</textarea>
+                              {{-- <textarea name="body" class="form-control form-control-alternative" id="inputBody" rows="3" placeholder="Enter the body..." >{{ old('body') }}</textarea> --}}
+                              <text-editor name="body"></text-editor>
                               @if($errors->has('body'))
                                   <span class="has-error has-feedback text-danger">{{ $errors->first('body') }}</span>
                               @endif

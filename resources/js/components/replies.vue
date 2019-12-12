@@ -45,7 +45,7 @@ export default {
             }
             return `${location.pathname}/replies?page=${page}`;
         }
-    },
+    }
 
 }
 </script>

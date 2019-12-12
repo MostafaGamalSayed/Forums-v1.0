@@ -1,20 +1,31 @@
 @extends('layouts.app')
 
 @section('styles')
-<link rel="stylesheet" href="/css/vendor/jquery.atwho.css">
-{{-- <style>
-    ul .sidebarLink:hover {
-        background-color: #f6f6f6;
-    }
 
-    .card:hover {
-        background-color: #f4f5f7;
+<style>
+    blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+      quotes: "\201C""\201D""\2018""\2019";
     }
-</style> --}}
+    blockquote:before {
+      color: #ccc;
+      content: open-quote;
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
+    blockquote p {
+     display: inline;
+    }
+</style>
 @endsection
 
 @section('content')
-<thread-view inline-template>
+<thread-view content="{{ $thread->body }}" inline-template>
     <div class="container">
         <section class="section section-blog-info">
             @GuestAlert
@@ -98,8 +109,8 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <p class="mb-4">
-                            {!! Markdown::convertToHtml($thread->body) !!}
+                        <p class="mb-4" v-html="body">
+
                         </p>
                         <div class="row align-items-center my-3 pb-3 border-bottom">
                             <div class="col-sm-6">

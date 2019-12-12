@@ -3,13 +3,13 @@
     <div class="media align-items-center mt-5">
         <img alt="Image placeholder" class="avatar avatar-lg rounded-circle mb-4" :src="signedUserAvatar">
         <div class="media-body">
-            <textarea class="form-control" id="thread-reply" placeholder="Can you help?" v-model="body" rows="3"></textarea>
+            <text-editor name="body" @TrixChanged="syncWithBody" v-model="body"></text-editor>
             <small v-if="errorHas('body')" class="text-danger" role="alert">
                 {{ errorMessages['body'][0] }}
             </small>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary float-right mr-2" @click="addReply">Reply</button>
+    <button type="submit" class="btn btn-primary float-right mt-3" @click="addReply">Reply</button>
 </div>
 </template>
 
@@ -29,7 +29,6 @@ export default {
     methods: {
         addReply() {
             axios.post(this.endpoint, {
-
                     body: this.body
 
                 })
@@ -38,6 +37,8 @@ export default {
                 }) => {
                     // Clear the input
                     this.body = '';
+                    $('#trix').val('');
+                    $('trix-editor').empty();
 
                     // Clear the error messages
                     this.errorMessages = [];
@@ -62,6 +63,26 @@ export default {
         errorHas(key) {
             // Return true if the error messages has the key parameter otherwise it will return false
             return this.errorMessages.hasOwnProperty(key);
+        },
+        // syncWithBody(data) {
+        //     console.log(data.indexOf('<pre>'));
+        //     this.body = data;
+        // }
+
+        syncWithBody(data) {
+            let pureCode = this.getPureCode(data);
+
+            let final_body = data.replace("<pre>" + pureCode + "</pre>", "<pre><code>" + pureCode + "</code></pre>")
+            console.log(final_body);
+            this.body = final_body;
+        },
+        getPureCode(data) {
+            let preTagStart = data.indexOf('<pre>');
+            let purCodeStart = preTagStart + 5;
+            let preTagEnd = data.indexOf('</pre>');
+            let purCodeEnd = preTagEnd;
+            let length = purCodeEnd - purCodeStart;
+            return data.substr(purCodeStart, length);
         }
     },
     mounted() {

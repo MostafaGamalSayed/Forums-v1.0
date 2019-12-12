@@ -22,7 +22,7 @@ class User extends Authenticatable
         'password', 'remember_token', 'email'
     ];
 
-    protected $appends = ['avatarFullPath'];
+    protected $appends = ['avatarFullPath', 'searchAvatar'];
 
     protected $casts = ['confirmed' => 'boolean'];
 
@@ -152,6 +152,16 @@ class User extends Authenticatable
      public function getAvatarFullPathAttribute()
      {
        return asset('storage/' . $this->avatar());
+     }
+
+     /**
+     * Get a vatar path for search page
+     *
+     * @return string
+     */
+     public function getSearchAvatarAttribute()
+     {
+       return $this->avatar();
      }
 
      /** Activate user account */

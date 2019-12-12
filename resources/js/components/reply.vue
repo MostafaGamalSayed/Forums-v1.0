@@ -43,14 +43,14 @@
                 <h6 class="h5 mt-0 mb-0"><a :href="'/profiles/' + reply.owner.name" v-text="reply.owner.name"></a></h6>
                 <small v-if="!editing"><i class="fa fa-clock mr-1"></i>Replied {{ reply.ago }}</small>
                 <div v-if="editing">
-                    <textarea class="form-control" v-model="body"></textarea>
+                    <text-editor name="body" v-model="body" :value="reply.body" @TrixChanged="syncWithBody" class="mt-3"></text-editor>
                     <div class="btn-group btn-group-xs mt-3">
                         <button class="btn btn-primary d-inline" @click="update">Edit</button>
                         <button class="d-inline btn btn-link" @click="cancelUpdate">cancel</button>
                     </div>
                 </div>
                 <div v-else>
-                    <p class="text-sm lh-160" v-html="markdown">
+                    <p class="text-sm lh-160" v-html="body">
                     </p>
                     <div class="media-footer">
                         <favorite :reply="reply"></favorite>
@@ -110,7 +110,6 @@ export default {
             reply: this.data,
             editing: false,
             body: this.data.body,
-            markdown: this.data.bodyMarkDown,
             signedUser: window.App.signedIn,
             bestAnswer: this.data.isBestReply
         }
@@ -169,15 +168,20 @@ export default {
 
                 flash('You marked this reply as the best answer.');
             });
+        },
+        syncWithBody(data) {
+            this.body = data;
         }
     },
     created() {
-        $('table').addClass('table table-bordered');
-        $('thead').addClass('bg-default text-white');
         window.events.$on('best-reply-selected', id => {
-            console.log(this.data.id == id);
             this.bestAnswer = (this.data.id == id);
         });
-    }
+        hljs.initHighlightingOnLoad();
+
+
+
+    },
+
 }
 </script>

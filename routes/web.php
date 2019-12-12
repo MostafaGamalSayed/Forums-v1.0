@@ -66,3 +66,6 @@ Route::post('users/{user}/avatar', 'Api\UsersAvatarController@store')->name('ava
 
 
 Route::get('/search', function(){return view('search');});
+
+
+Route::view('test', 'test');

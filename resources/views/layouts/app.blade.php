@@ -33,6 +33,8 @@
         [v-cloak]{ display: none;}
     </style>
     @yield('styles')
+    <link href="{{ asset('css/vendor/trix.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/vendor/jquery.atwho.css') }}">
     <link href="{{ asset('css/atom-one-dark.css') }}" rel="stylesheet">
 </head>
 <body style="font-family: 'Roboto', sans-serif;">
@@ -142,7 +144,7 @@
         </main>
     </div>
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+  <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('argon/assets/js/argon.js') }}"></script>
     @yield('scripts')
     <script src="{{ asset('js/highlight.pack.js') }}"></script>

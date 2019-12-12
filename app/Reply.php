@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Mockery\CountValidator\Exception;
 use Carbon\Carbon;
-use GrahamCampbell\Markdown\Facades\Markdown;
 
 class Reply extends Model
 {
@@ -17,7 +16,7 @@ class Reply extends Model
 
     protected $with = ['owner'];
 
-    protected $appends = ['favoritesCount', 'isFavorited', 'bodyMarkDown', 'ago', 'threadSlug', 'isBestReply'];
+    protected $appends = ['favoritesCount', 'isFavorited', 'ago', 'threadSlug', 'isBestReply'];
 
     /**
      * A reply belongs to one tread
@@ -58,27 +57,6 @@ class Reply extends Model
       preg_match_all('/\@([\w\-]+)/', $this->body, $matches);
       return $matches[1];
     }
-
-
-    /**
-    * Set the body attribute.
-    *
-    * @param string $body
-    */
-   public function setBodyAttribute($body)
-   {
-      //This is an [example link](http:///example.com/)
-       $this->attributes['body'] = preg_replace(
-           '/@([\w\-]+)/',
-           '[$0](/profiles/$1)',
-           $body
-       );
-   }
-
-   public function getBodyMarkDownAttribute()
-   {
-      return Markdown::convertToHtml($this->body);
-   }
 
    public function getAgoAttribute()
    {

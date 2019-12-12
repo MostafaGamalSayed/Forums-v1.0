@@ -5,7 +5,24 @@
  */
  import InstantSearch from 'vue-instantsearch';
 window.Vue = require('vue');
+
 Vue.use(InstantSearch);
+
+import VueHighlightJS from 'vue-highlight.js';
+
+// Highlight.js languages (All languages)
+import 'vue-highlight.js/lib/allLanguages'
+
+/*
+* Import Highlight.js theme
+* Find more: https://highlightjs.org/static/demo/
+*/
+import 'highlight.js/styles/atom-one-light.css';
+
+/*
+* Use Vue Highlight.js
+*/
+Vue.use(VueHighlightJS);
 
 Vue.prototype.authorize = function(handler){
     return handler(window.App.user);
@@ -24,8 +41,7 @@ Vue.component('thread-view', require('./components/pages/thread.vue'));
 Vue.component('paginator', require('./components/paginator.vue'));
 Vue.component('user-notification', require('./components/UserNotification.vue'));
 Vue.component('thread-search', require('./components/search.vue'));
-
-
+Vue.component('text-editor', require('./components/editor.vue'));
 
 const app = new Vue({
     el: '#app'
